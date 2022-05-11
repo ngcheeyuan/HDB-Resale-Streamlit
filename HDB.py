@@ -135,20 +135,24 @@ with map_1:
     st.markdown("""If the flat sold for between \$400,000 and \$600,000 , the markers will be labelled orange. """)
     st.markdown("""If the flat sold for more than $600,0000 , the markers will be labelled red. """)
     addresses = list(df.town.unique())
+
     town = st.selectbox('Please Input a town',addresses)
-    
     mask = df['town'] == town
-    temp = df[mask]
+    blk = st.text_input("Please Input a HDB block")
+    load = st.checkbox('Load Data')
+    if "load_state" not in st.session_state:
+        st.session_state.load_state = False
 
-    blocks = list(temp.block.unique())
-    blk = st.text_input("Please Input a HDB block", blocks[0])
-
-    mymap , temp_df = map_nearest_transactions(blk,town,2022)
-    st_folium(mymap)
+    if load or st.session_state.load_state:
+        st.session_state.load_state = True
+        mymap , temp_df = map_nearest_transactions(blk,town,2022)
+        st_folium(mymap)
 
 with graphs_2:
      st.title("Summary Statistics of recent transactions in the neighbourhood made in 2022")
      st.markdown("""These graphs summarises the recent transactions that were made in 2022. \
                 They only include transactions that were made within 500 metres radius of the HDB block that you have input into the cell above.""")
-     plot_graphs(temp_df)
-     st.dataframe(temp_df.groupby('flat_type').agg({'resale_price':['min','mean','median','max','count']}).apply(pd.to_numeric, downcast='integer'))
+     if load or st.session_state.load_state:
+        plot_graphs(temp_df)
+        st.dataframe(temp_df.groupby('flat_type').agg({'resale_price':['min','mean','median','max','count']}).apply(pd.to_numeric, downcast='integer'))
+        st.session_state.load_state = False
