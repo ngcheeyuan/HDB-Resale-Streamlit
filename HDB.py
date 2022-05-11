@@ -136,19 +136,22 @@ with map_1:
     st.markdown("""If the flat sold for more than $600,0000 , the markers will be labelled red. """)
 
     addresses = list(df.town.unique())
-    with st.form(key='my_form'):
-        town = st.selectbox('Please Input a town',addresses , key = 'town')
+
+    if 'load' not in st.session_state:
+          st.session_state['load'] = False
+
+
+    with st.form(key = 'form'):
+        text_input_container = st.empty()
+        town = text_input_container.selectbox('Please Input a town',addresses , key = 'town')
         blk = st.text_input('Please Input a blk number',309, key = 'blk')
         submit_button = st.form_submit_button(label='Submit')
         st.write(st.session_state)
-    
-    if 'load' not in st.session_state:
-        st.session_state['load'] = False
 
     if submit_button or st.session_state['load']:
         st.session_state['load'] = True
         mymap , temp_df = map_nearest_transactions(st.session_state['blk'],st.session_state['town'],2022)
-        st_folium(mymap)
+       #st_folium(mymap)
 
         st.title("Summary Statistics of recent transactions in the neighbourhood made in 2022")
         st.markdown("""These graphs summarises the recent transactions that were made in 2022. \
