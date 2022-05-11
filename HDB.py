@@ -146,7 +146,6 @@ with map_1:
         town = text_input_container.selectbox('Please Input a town',addresses , key = 'town')
         blk = st.text_input('Please Input a blk number',309, key = 'blk')
         submit_button = st.form_submit_button(label='Submit')
-        st.write(st.session_state)
 
     if submit_button or st.session_state['load']:
         st.session_state['load'] = True
