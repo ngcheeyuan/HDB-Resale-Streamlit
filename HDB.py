@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import requests
 import folium
-from streamlit_folium import st_folium
+from streamlit_folium import folium_static
 
 def haversine(lat1,lon1,lat2,lon2):
     lat1 , lon1 , lat2 , lon2 = map(np.deg2rad,\
@@ -151,7 +151,7 @@ with map_1:
     if submit_button or st.session_state['load']:
         st.session_state['load'] = True
         mymap , temp_df = map_nearest_transactions(st.session_state['blk'],st.session_state['town'],2022)
-       #st_folium(mymap)
+        folium_static(mymap)
 
         st.title("Summary Statistics of recent transactions in the neighbourhood made in 2022")
         st.markdown("""These graphs summarises the recent transactions that were made in 2022. \
