@@ -134,25 +134,25 @@ with map_1:
     st.markdown("""If the flat sold for less than $400,000 , the markers will be labelled green. """)
     st.markdown("""If the flat sold for between \$400,000 and \$600,000 , the markers will be labelled orange. """)
     st.markdown("""If the flat sold for more than $600,0000 , the markers will be labelled red. """)
+
     addresses = list(df.town.unique())
+    with st.form(key='my_form'):
+        town = st.selectbox('Please Input a town',addresses , key = 'town')
+        blk = st.text_input('Please Input a blk number',309, key = 'blk')
+        submit_button = st.form_submit_button(label='Submit')
+        st.write(st.session_state)
+    
+    if 'load' not in st.session_state:
+        st.session_state['load'] = False
 
-    town = st.selectbox('Please Input a town',addresses)
-    mask = df['town'] == town
-    blk = st.text_input("Please Input a HDB block")
-    load = st.checkbox('Load Data')
-    if "load_state" not in st.session_state:
-        st.session_state.load_state = False
-
-    if load or st.session_state.load_state:
-        st.session_state.load_state = True
-        mymap , temp_df = map_nearest_transactions(blk,town,2022)
+    if submit_button or st.session_state['load']:
+        st.session_state['load'] = True
+        mymap , temp_df = map_nearest_transactions(st.session_state['blk'],st.session_state['town'],2022)
         st_folium(mymap)
 
-with graphs_2:
-     st.title("Summary Statistics of recent transactions in the neighbourhood made in 2022")
-     st.markdown("""These graphs summarises the recent transactions that were made in 2022. \
+        st.title("Summary Statistics of recent transactions in the neighbourhood made in 2022")
+        st.markdown("""These graphs summarises the recent transactions that were made in 2022. \
                 They only include transactions that were made within 500 metres radius of the HDB block that you have input into the cell above.""")
-     if load or st.session_state.load_state:
+
         plot_graphs(temp_df)
-        st.dataframe(temp_df.groupby('flat_type').agg({'resale_price':['min','mean','median','max','count']}).apply(pd.to_numeric, downcast='integer'))
-        st.session_state.load_state = False
+        st.dataframe(temp_df.groupby('flat_type').agg({'resale_price':['min','mean','median','max','count']}).apply(pd.to_numeric, downcast='integer')) 
